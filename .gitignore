@@ -1,0 +1,13 @@
+# Dependency folder
+node_modules/
+
+# Environment variables (keeps your secret API key safe)
+.env
+
+# Uploads or temporary files
+uploads/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+

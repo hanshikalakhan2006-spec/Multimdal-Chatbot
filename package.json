@@ -1,0 +1,17 @@
+{
+  "name": "study-buddy-chat",
+  "version": "1.0.0",
+  "description": "Study Buddy Multimodal AI Chatbot for College Lab",
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "@google/genai": "latest",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
+

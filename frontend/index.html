@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Buddy Chat 🎓</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-icon">🎓</div>
+        <div>
+          <h1>Study Buddy Chat</h1>
+          <p class="subtitle">Your Multimodal College AI Assistant</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="status-badge" class="badge badge-connecting">
+          <span class="status-dot"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Error Banner (Hidden by default) -->
+    <div id="error-banner" class="error-banner hidden" role="alert">
+      <span class="error-icon">⚠️</span>
+      <span id="error-text">An error occurred.</span>
+      <button id="close-error-btn" class="close-error-btn" aria-label="Dismiss error">&times;</button>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <main class="chat-container" id="chat-messages" aria-live="polite">
+      <!-- Welcome Message -->
+      <div class="message-row bot-row">
+        <div class="avatar bot-avatar">🤖</div>
+        <div class="message-bubble bot-bubble">
+          <div class="bubble-header">Study Buddy</div>
+          <div class="bubble-content">
+            Hello! I am your <strong>Study Buddy</strong>. You can ask me any study questions, and I'll explain them step by step.
+            <div class="tip-box">
+              💡 <strong>Step 1 (Active):</strong> Text Chat is ready!<br>
+              🖼️ <strong>Step 2 (Active):</strong> Image analysis is ready! Upload diagrams and homework.<br>
+              🎙️ <strong>Step 3 (Active):</strong> Audio transcription & summarization ready! Upload MP3, WAV, or M4A.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Loading Indicator (Hidden by default) -->
+    <div id="loading-indicator" class="loading-indicator hidden">
+      <div class="avatar bot-avatar">🤖</div>
+      <div class="loading-bubble">
+        <span class="loading-text">Study Buddy is thinking</span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <footer class="input-area">
+      <!-- Image Preview Strip (Visible when image is selected) -->
+      <div id="image-preview-bar" class="media-preview-bar hidden">
+        <div class="preview-card">
+          <img id="image-preview-img" src="" alt="Selected preview">
+          <div class="preview-info">
+            <span id="preview-filename" class="preview-filename">image.png</span>
+            <span id="preview-filesize" class="preview-filesize">0 KB</span>
+          </div>
+          <button type="button" id="remove-image-btn" class="btn-remove-media" title="Remove image">&times;</button>
+        </div>
+      </div>
+
+      <!-- Audio Preview Strip (Visible when audio is selected) -->
+      <div id="audio-preview-bar" class="media-preview-bar hidden">
+        <div class="audio-preview-card">
+          <div class="audio-card-top">
+            <div class="audio-icon-badge">🎙️</div>
+            <div class="preview-info">
+              <span id="audio-filename" class="preview-filename">lecture.mp3</span>
+              <span id="audio-filesize" class="preview-filesize">0 KB</span>
+            </div>
+            <button type="button" id="remove-audio-btn" class="btn-remove-media" title="Remove audio">&times;</button>
+          </div>
+          <audio id="audio-preview-player" controls class="mini-audio-player"></audio>
+          <div class="audio-mode-selector">
+            <span class="mode-title">AI Action:</span>
+            <label class="mode-pill">
+              <input type="radio" name="audio-mode" value="summarize" checked>
+              <span>💡 Summarize & Notes</span>
+            </label>
+            <label class="mode-pill">
+              <input type="radio" name="audio-mode" value="transcribe">
+              <span>📝 Verbatim Transcript</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <form id="chat-form" class="chat-form">
+        <!-- Hidden file inputs -->
+        <input
+          type="file"
+          id="image-input"
+          accept="image/png, image/jpeg, image/jpg, image/webp"
+          style="display: none;"
+        >
+        <input
+          type="file"
+          id="audio-input"
+          accept="audio/mp3, audio/mpeg, audio/wav, audio/m4a, audio/aac, audio/ogg, audio/webm"
+          style="display: none;"
+        >
+
+        <!-- Attach Image Button -->
+        <button
+          type="button"
+          id="attach-image-btn"
+          class="btn-attach"
+          title="Upload an image (PNG, JPG up to 15MB)"
+          aria-label="Upload an image"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </button>
+
+        <!-- Attach Audio Button -->
+        <button
+          type="button"
+          id="attach-audio-btn"
+          class="btn-attach"
+          title="Upload audio (MP3, WAV, M4A up to 15MB)"
+          aria-label="Upload audio"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </button>
+
+        <div class="input-wrapper">
+          <textarea
+            id="message-input"
+            rows="1"
+            placeholder="Ask a question, upload an image, or attach audio (lectures, voice notes)..."
+            autocomplete="off"
+          ></textarea>
+        </div>
+        <button type="submit" id="send-button" class="btn-send" aria-label="Send message">
+          <span>Send</span>
+          <svg class="send-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+      <div class="input-footer-note">
+        Press <strong>Enter</strong> to send. Supported: Images (PNG, JPG) & Audio (MP3, WAV, M4A up to 15MB).
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
